@@ -1,6 +1,9 @@
 USING: fry io kernel sequences sets splitting unix.process ;
 IN: factor-shell
 
+: print-prompt ( -- )
+    "thing" print ;
+
 : tokenize-lines ( str -- seq )
     " " split ;
 
@@ -8,4 +11,4 @@ IN: factor-shell
     [ first ] keep '[ _ _ exec ] [ "parent" print ] with-fork drop ;
 
 : factor-shell ( -- )
-    [ "exit" = not [ dup tokenize-lines run-command ] when ] [ readln dup ] do until ;
+    [ "exit" = ] [ readln dup tokenize-lines run-command ] do until ;
