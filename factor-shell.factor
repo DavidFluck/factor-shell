@@ -8,6 +8,6 @@ IN: factor-shell
     " " split ;
 
 : factor-shell ( -- )
-    [ "exit" = ] [ print-prompt readln dup run-process wait-for-process drop  ] do until ;
+    [ 0 0 = ] [ print-prompt readln dup "exit" = [ 0 exit ] [ ] if run-process wait-for-process drop  ] while ;
 
 MAIN: factor-shell
