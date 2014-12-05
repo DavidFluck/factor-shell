@@ -8,7 +8,9 @@ IN: factor-shell
     " " split ;
 
 : run-command ( seq -- )
-    [ first ] keep '[ _ _ exec ] [ "parent" print ] with-fork drop ;
+    "junk" [ first ] keep '[ "child" print flush  _ _ exec drop ] [ flush drop drop "junker" ] with-fork drop ;
 
 : factor-shell ( -- )
-    [ "exit" = ] [ readln dup tokenize-lines run-command ] do until ;
+    "yo" print flush [ "exit" = ] [ readln dup tokenize-lines run-command "loopin" print flush ] do until ;
+
+MAIN: factor-shell
