@@ -1,16 +1,13 @@
-USING: fry io kernel sequences sets splitting unix.process ;
+USING: fry io kernel sequences sets splitting unix.process system io.launcher formatting ;
 IN: factor-shell
 
 : print-prompt ( -- )
-    "thing" print ;
+    "thing> " printf flush ;
 
 : tokenize-lines ( str -- seq )
     " " split ;
 
-: run-command ( seq -- )
-    "junk" [ first ] keep '[ "child" print flush  _ _ exec drop ] [ flush drop drop "junker" ] with-fork drop ;
-
 : factor-shell ( -- )
-    "yo" print flush [ "exit" = ] [ readln dup tokenize-lines run-command "loopin" print flush ] do until ;
+    [ "exit" = ] [ print-prompt readln dup run-process wait-for-process drop  ] do until ;
 
 MAIN: factor-shell
