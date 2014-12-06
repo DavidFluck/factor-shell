@@ -16,6 +16,7 @@ IN: factor-shell
 : factor-shell ( -- )
      [ t ] [ print-prompt readln exit-maybe tokenize-line 
      { 
+       { [ dup first "cd" = ] [ 1 tail " " join cd ] } 
        { [ dup last "&" = ] [ 1 head* " " join run-detached drop ] } 
        [ " " join run-process wait-for-process drop ] 
      } cond ] while ;
