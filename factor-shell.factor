@@ -4,10 +4,13 @@ IN: factor-shell
 : print-prompt ( -- )
     "thing> " printf flush ;
 
-: tokenize-lines ( str -- seq )
+: tokenize-line ( str -- seq )
     " " split ;
 
+: exit-maybe ( x -- x )
+    dup "exit" = [ 0 exit ] [ ] if ;
+
 : factor-shell ( -- )
-    [ 0 0 = ] [ print-prompt readln dup "exit" = [ 0 exit ] [ ] if run-process wait-for-process drop  ] while ;
+     [ t ] [ print-prompt readln exit-maybe tokenize-line dup last "&" = [ 1 head* " " join run-detached drop ] [ " " join run-process wait-for-process drop ] if ] while ;
 
 MAIN: factor-shell
