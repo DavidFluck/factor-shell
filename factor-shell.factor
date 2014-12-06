@@ -1,8 +1,11 @@
-USING: fry io kernel sequences sets splitting unix.process system io.launcher formatting ;
+USING: fry io kernel sequences sets splitting unix.process system io.launcher formatting io.pathnames io.files.private ;
 IN: factor-shell
 
+: make-prompt ( -- str )
+    { } cwd suffix "$ " suffix "" join ;
+
 : print-prompt ( -- )
-    "thing> " printf flush ;
+    make-prompt write flush ;
 
 : tokenize-line ( str -- seq )
     " " split ;
