@@ -13,7 +13,6 @@ IN: factor-shell
 
 : exit-maybe ( x -- x )
     dup "exit" = [ 0 exit ] [ ] if ;
-<<<<<<< HEAD
 
 : cd ( path -- ) dup unix.ffi:chdir 0 = not [ "cd: no such file or directory: " swap "\n" 3append ] when write flush ;
 
