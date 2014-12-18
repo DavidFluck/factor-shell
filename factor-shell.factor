@@ -1,9 +1,10 @@
-USING: fry io kernel sequences sets splitting unix.process system io.launcher formatting io.pathnames io.files.private combinators math.parser continuations sequences.extras accessors ;
+
+USING: fry io kernel sequences sets splitting unix.process system io.launcher formatting io.pathnames io.files.private combinators math.parser continuations sequences.extras accessors peg.ebnf ;
 QUALIFIED: unix.ffi
 IN: factor-shell
 
 : make-prompt ( -- str )
-     { } cwd suffix "$ " suffix "" join ;
+    { } cwd suffix " $" suffix "" join ;
 
 : print-prompt ( -- )
     make-prompt write flush ;
@@ -14,9 +15,6 @@ IN: factor-shell
 : exit-maybe ( x -- x )
     dup "exit" = [ 0 exit ] [ ] if ;
 
-: try-cd ( x -- )
-    '[ _ unix.ffi:chdir ] [ "Error changing directories" write ] recover drop ;
-
 : segment-seq-for-piping ( x -- x )
    { { } } [ dup "|" = 
       [ drop { } suffix ]
@@ -24,18 +22,15 @@ IN: factor-shell
       [ [ dup last ] dip suffix [ 1 head* ] dip suffix ]
       if ] reduce ;
 
+: cd ( path -- ) dup unix.ffi:chdir 0 = not [ "cd: no such file or directory: " swap "\n" 3append ] when write flush ;
+
 : factor-shell ( -- )
     [ t ] [ print-prompt readln exit-maybe tokenize-line
     {
         { [ dup { "|" } contains? ] [ segment-seq-for-piping input-stream [ <process> swap " " join >>command  swap >>stdin run-process stdout>> ] reduce drop ]  }
-
-        { [ dup first "cd" = ] [ 1 tail " " join try-cd ] }
+        { [ dup first "cd" = ] [ 1 tail " " join cd ] }
         { [ dup last "&" = ] [ 1 head* run-detached drop ] }
-        [ " " join run-process wait-for-process drop ]
+        [ run-process wait-for-process drop ]
     } cond ] while ;
 
-: test-stuff ( -- )
-    factor-shell ;
-   ! { "yo" "yo1" "|" "yo2" "yo3" "yo4" } segment-seq-for-piping [ [ print "5" ] map "BAR" print ] map drop ;
-
-MAIN: test-stuff
+MAIN: factor-shell
