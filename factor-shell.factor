@@ -3,7 +3,7 @@ QUALIFIED: unix.ffi
 IN: factor-shell
 
 : make-prompt ( -- str )
-    { } cwd suffix " % " suffix "" join ;
+    { } cwd suffix " $" suffix "" join ;
 
 : print-prompt ( -- )
     make-prompt write flush ;
@@ -13,10 +13,11 @@ IN: factor-shell
 
 : exit-maybe ( x -- x )
     dup "exit" = [ 0 exit ] [ ] if ;
+<<<<<<< HEAD
 
 : cd ( path -- ) dup unix.ffi:chdir 0 = not [ "cd: no such file or directory: " swap "\n" 3append ] when write flush ;
 
-: factor-shell-main ( -- )
+: factor-shell ( -- )
     [ t ] [ print-prompt readln exit-maybe tokenize-line
     {
     { [ dup first "cd" = ] [ 1 tail " " join cd ] }
@@ -24,4 +25,4 @@ IN: factor-shell
     [ run-process wait-for-process drop ]
     } cond ] while ;
 
-MAIN: factor-shell-main
+MAIN: factor-shell
